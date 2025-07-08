@@ -1,0 +1,18 @@
+db:
+  host: 'localhost'
+  type: 'postgres'
+  port: 5432
+  username: 'postgres'
+  password: '12345'
+  synchronize: false
+
+queue:
+  driver: 'redis'
+  host: 'redis-12344.c283.us-east-1-4.ec2.redns.redis-cloud.com'
+  port: 12344
+  db: 'cms'
+  password: 'e6SYbDtxhowSE5v9YqNoeaYLcEK7sXPW'
+  username: 'default'
+
+jwt:
+  secret: 'example@123'
