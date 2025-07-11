@@ -17,6 +17,12 @@ export class CriminalSerializer extends ModelSerializer {
   @ApiProperty()
   birthplace: string;
 
+  @ApiProperty()
+  birthdate: Date;
+
+  @ApiProperty()
+  address: string;
+
   @ApiPropertyOptional()
   @Expose({
     groups: basicFieldGroupsForSerializing
