@@ -4,6 +4,7 @@ db:
   port: 5432
   username: 'postgres'
   password: '12345'
+  database: 'cms_criminal_manager'
   synchronize: false
 
 queue:

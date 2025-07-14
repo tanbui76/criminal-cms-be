@@ -11,13 +11,19 @@ export class CriminalEntity extends CustomBaseEntity {
   @Index({
     unique: true
   })
-  name: string;
+  name: string; //tên
 
   @Column('text')
-  description: string;
+  description: string; //mô tả (ghi chú)
 
   @Column('varchar')
-  birthplace: string;
+  birthplace: string; //nơi sinh
+
+  @Column('varchar')
+  birthdate: Date; //ngày tháng năm sinh
+
+  @Column('varchar')
+  address: string; // hộ khẩu thường trú
 
   constructor(data?: Partial<CriminalEntity>) {
     super();
