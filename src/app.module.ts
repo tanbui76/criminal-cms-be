@@ -31,6 +31,7 @@ import { DashboardModule } from 'src/dashboard/dashboard.module';
 import { AppController } from 'src/app.controller';
 import winstonConfig from 'src/config/winston';
 import { CriminalsModule } from './features/criminals/criminals.module';
+import { ProfileTypesModule } from './features/profileTypes/profile-types.module';
 
 const appConfig = config.get('app');
 
@@ -73,7 +74,8 @@ const appConfig = config.get('app');
     RefreshTokenModule,
     TwofaModule,
     DashboardModule,
-    CriminalsModule
+    CriminalsModule,
+    ProfileTypesModule
   ],
   providers: [
     {

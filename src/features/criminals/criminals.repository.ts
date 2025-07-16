@@ -15,11 +15,21 @@ export class CriminalsRepository extends BaseRepository<
   async store(
     createCriminalDto: CreateCriminalDto
   ): Promise<CriminalSerializer> {
-    const { name, description, birthplace } = createCriminalDto;
+    const {
+      name,
+      description,
+      birthplace,
+      startExecuteDate,
+      endExecuteDate,
+      doneExecuteDate
+    } = createCriminalDto;
     const criminal = this.create();
     criminal.name = name;
     criminal.description = description;
     criminal.birthplace = birthplace;
+    criminal.startExecuteDate = startExecuteDate;
+    criminal.endExecuteDate = endExecuteDate;
+    criminal.doneExecuteDate = doneExecuteDate;
     await criminal.save();
     return this.transform(criminal);
   }
@@ -28,7 +38,14 @@ export class CriminalsRepository extends BaseRepository<
     criminal: CriminalEntity,
     updateCriminalDto: UpdateCriminalDto
   ): Promise<CriminalSerializer> {
-    const fields = ['name', 'description', 'birthplace'];
+    const fields = [
+      'name',
+      'description',
+      'birthplace',
+      'startExecuteDate',
+      'endExecuteDate',
+      'doneExecuteDate'
+    ];
     for (const field of fields) {
       if (updateCriminalDto[field]) {
         criminal[field] = updateCriminalDto[field];
