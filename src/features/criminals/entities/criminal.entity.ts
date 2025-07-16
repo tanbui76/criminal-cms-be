@@ -20,7 +20,7 @@ export class CriminalEntity extends CustomBaseEntity {
   @Column('varchar')
   birthplace: string; //nơi sinh
 
-  @Column('varchar')
+  @Column('date')
   birthdate: Date; //ngày tháng năm sinh
 
   @Column('varchar')

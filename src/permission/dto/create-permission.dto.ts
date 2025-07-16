@@ -15,7 +15,7 @@ const methodListArray = [
   MethodList.POST,
   MethodList.ANY,
   MethodList.DELETE,
-  MethodList.OPTIONS,
+  MethodList.PUT,
   MethodList.OPTIONS
 ];
 

@@ -17,14 +17,18 @@ export class CriminalsRepository extends BaseRepository<
   ): Promise<CriminalSerializer> {
     const {
       name,
+      address,
       description,
       birthplace,
       startExecuteDate,
       endExecuteDate,
-      doneExecuteDate
+      doneExecuteDate,
+      birthdate
     } = createCriminalDto;
     const criminal = this.create();
     criminal.name = name;
+    criminal.address = address;
+    criminal.birthdate = birthdate;
     criminal.description = description;
     criminal.birthplace = birthplace;
     criminal.startExecuteDate = startExecuteDate;
@@ -42,6 +46,8 @@ export class CriminalsRepository extends BaseRepository<
       'name',
       'description',
       'birthplace',
+      'birthdate',
+      'address',
       'startExecuteDate',
       'endExecuteDate',
       'doneExecuteDate'
