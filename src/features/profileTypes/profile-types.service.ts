@@ -6,19 +6,19 @@ import { NotFoundException } from 'src/exception/not-found.exception';
 import { basicFieldGroupsForSerializing } from 'src/features/criminals/serializer/criminal.serializer';
 import { CommonServiceInterface } from 'src/common/interfaces/common-service.interface';
 import { Pagination } from 'src/paginate';
-import { CriminalSerializer } from './serializer/criminal.serializer';
-import { CriminalsRepository } from './criminals.repository';
-import { CreateCriminalDto } from './dto/create-criminal.dto';
-import { CriminalFilterDto } from './dto/criminal-filter.dto';
-import { UpdateCriminalDto } from './dto/update-criminal.dto';
+import { ProfileTypeSerializer } from './serializer/profile-type.serializer';
+import { ProfileTypesRepository } from './profile-types.repository';
+import { CreateProfileTypeDto } from './dto/create-profile-type.dto';
+import { ProfileTypeFilterDto } from './dto/profile-type-filter.dto';
+import { UpdateProfileTypeDto } from './dto/update-profile-type.dto';
 
 @Injectable()
-export class CriminalsService
-  implements CommonServiceInterface<CriminalSerializer>
+export class ProfileTypesService
+  implements CommonServiceInterface<ProfileTypeSerializer>
 {
   constructor(
-    @InjectRepository(CriminalsRepository)
-    private repository: CriminalsRepository
+    @InjectRepository(ProfileTypesRepository)
+    private repository: ProfileTypesRepository
   ) {}
 
   /**
@@ -31,12 +31,12 @@ export class CriminalsService
 
   /**
    * create new criminal
-   * @param createCriminalDto
+   * @param createProfileTypeDto
    */
   async create(
-    createCriminalDto: CreateCriminalDto
-  ): Promise<CriminalSerializer> {
-    return this.repository.store(createCriminalDto);
+    createProfileTypeDto: CreateProfileTypeDto
+  ): Promise<ProfileTypeSerializer> {
+    return this.repository.store(createProfileTypeDto);
   }
 
   /**
@@ -44,19 +44,12 @@ export class CriminalsService
    * @param criminalFilterDto
    */
   async findAll(
-    criminalFilterDto: CriminalFilterDto
-  ): Promise<Pagination<CriminalSerializer>> {
+    criminalFilterDto: ProfileTypeFilterDto
+  ): Promise<Pagination<ProfileTypeSerializer>> {
     return this.repository.paginate(
       criminalFilterDto,
       [],
-      [
-        'name',
-        'description',
-        'birthplace',
-        'startExecuteDate',
-        'endExecuteDate',
-        'doneExecuteDate'
-      ],
+      ['name', 'description'],
       {
         groups: [basicFieldGroupsForSerializing]
       }
@@ -67,27 +60,27 @@ export class CriminalsService
    * find criminal by id
    * @param id
    */
-  async findOne(id: number): Promise<CriminalSerializer> {
+  async findOne(id: number): Promise<ProfileTypeSerializer> {
     return this.repository.get(id, [], {
       groups: [basicFieldGroupsForSerializing]
     });
   }
 
   /**
-   * update Criminal by id
+   * update ProfileType by id
    * @param id
-   * @param updateCriminalDto
+   * @param updateProfileTypeDto
    */
   async update(
     id: number,
-    updateCriminalDto: UpdateCriminalDto
-  ): Promise<CriminalSerializer> {
-    const criminal = await this.repository.findOne(id);
-    if (!criminal) {
+    updateProfileTypeDto: UpdateProfileTypeDto
+  ): Promise<ProfileTypeSerializer> {
+    const profileType = await this.repository.findOne(id);
+    if (!profileType) {
       throw new NotFoundException();
     }
     const condition: ObjectLiteral = {
-      name: updateCriminalDto.name
+      name: updateProfileTypeDto.name
     };
     condition.id = Not(id);
     const checkUniqueTitle = await this.repository.countEntityByCondition(
@@ -101,7 +94,7 @@ export class CriminalsService
         }
       });
     }
-    return this.repository.updateItem(criminal, updateCriminalDto);
+    return this.repository.updateItem(profileType, updateProfileTypeDto);
   }
 
   /**
