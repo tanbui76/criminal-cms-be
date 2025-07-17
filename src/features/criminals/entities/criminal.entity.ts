@@ -1,7 +1,16 @@
-import { Column, Entity, Index, ManyToOne, Unique } from 'typeorm';
+import {
+  Column,
+  Entity,
+  Index,
+  JoinColumn,
+  ManyToOne,
+  OneToOne,
+  Unique
+} from 'typeorm';
 
 import { CustomBaseEntity } from 'src/common/entity/custom-base.entity';
 import { ProfileTypeEntity } from 'src/features/profileTypes/entities/profile-type.entity';
+import { JudgmentExecutionEntity } from 'src/features/judgementExecution/entities/judgement-execution.entity';
 
 @Entity({
   name: 'criminals'
@@ -28,6 +37,10 @@ export class CriminalEntity extends CustomBaseEntity {
 
   @ManyToOne(() => ProfileTypeEntity, (profileType) => profileType.criminals)
   profileType: ProfileTypeEntity;
+
+  @OneToOne(() => JudgmentExecutionEntity)
+  @JoinColumn()
+  judgmentExecution: JudgmentExecutionEntity;
 
   @Column('date')
   startExecuteDate: Date; //Ngày bắt đầu chấp hành án

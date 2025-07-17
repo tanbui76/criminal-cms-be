@@ -32,6 +32,7 @@ import { AppController } from 'src/app.controller';
 import winstonConfig from 'src/config/winston';
 import { CriminalsModule } from './features/criminals/criminals.module';
 import { ProfileTypesModule } from './features/profileTypes/profile-types.module';
+import { JudgmentExecutionsModule } from './features/judgementExecution/judgement-executions.module';
 
 const appConfig = config.get('app');
 
@@ -75,7 +76,8 @@ const appConfig = config.get('app');
     TwofaModule,
     DashboardModule,
     CriminalsModule,
-    ProfileTypesModule
+    ProfileTypesModule,
+    JudgmentExecutionsModule
   ],
   providers: [
     {
