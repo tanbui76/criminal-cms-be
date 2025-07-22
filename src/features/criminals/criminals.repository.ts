@@ -6,6 +6,8 @@ import { CriminalEntity } from './entities/criminal.entity';
 import { CriminalSerializer } from './serializer/criminal.serializer';
 import { CreateCriminalDto } from './dto/create-criminal.dto';
 import { UpdateCriminalDto } from './dto/update-criminal.dto';
+import { ProfileTypeEntity } from '../profileTypes/entities/profile-type.entity';
+import { JudgmentExecutionEntity } from '../judgementExecution/entities/judgement-execution.entity';
 
 @EntityRepository(CriminalEntity)
 export class CriminalsRepository extends BaseRepository<
@@ -23,6 +25,8 @@ export class CriminalsRepository extends BaseRepository<
       startExecuteDate,
       endExecuteDate,
       doneExecuteDate,
+      profileTypeId,
+      judgmentExecutionId,
       birthdate
     } = createCriminalDto;
     const criminal = this.create();
@@ -34,6 +38,20 @@ export class CriminalsRepository extends BaseRepository<
     criminal.startExecuteDate = startExecuteDate;
     criminal.endExecuteDate = endExecuteDate;
     criminal.doneExecuteDate = doneExecuteDate;
+    if (profileTypeId) {
+      criminal.profileType = await this.manager.findOne(ProfileTypeEntity, {
+        where: { id: profileTypeId }
+      });
+    }
+
+    if (judgmentExecutionId) {
+      criminal.judgmentExecution = await this.manager.findOne(
+        JudgmentExecutionEntity,
+        {
+          where: { id: judgmentExecutionId }
+        }
+      );
+    }
     await criminal.save();
     return this.transform(criminal);
   }
@@ -56,6 +74,22 @@ export class CriminalsRepository extends BaseRepository<
       if (updateCriminalDto[field]) {
         criminal[field] = updateCriminalDto[field];
       }
+    }
+    if (updateCriminalDto.profileTypeId) {
+      criminal.profileType = await this.manager.findOne(ProfileTypeEntity, {
+        where: { id: updateCriminalDto.profileTypeId }
+      });
+    }
+
+    if (updateCriminalDto.judgmentExecutionId) {
+      criminal.judgmentExecution = await this.manager.findOne(
+        JudgmentExecutionEntity,
+        {
+          where: {
+            id: updateCriminalDto.judgmentExecutionId
+          }
+        }
+      );
     }
     await criminal.save();
     return this.transform(criminal);

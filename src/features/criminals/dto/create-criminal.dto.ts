@@ -1,6 +1,7 @@
 import {
   IsDate,
   IsNotEmpty,
+  IsNumber,
   IsString,
   MaxLength,
   ValidateIf
@@ -28,6 +29,14 @@ export class CreateCriminalDto {
 
   @ValidateIf((object, value) => value)
   address: string; // hộ khẩu thường trú
+
+  @ValidateIf((object, value) => value)
+  @IsNumber()
+  profileTypeId: number;
+
+  @ValidateIf((object, value) => value)
+  @IsNumber()
+  judgmentExecutionId: number;
 
   @ValidateIf((object, value) => value)
   @IsDate()
