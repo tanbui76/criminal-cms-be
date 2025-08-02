@@ -3,7 +3,6 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, MoreThanOrEqual } from 'typeorm';
 import { SignOptions, TokenExpiredError } from 'jsonwebtoken';
-import * as config from 'config';
 
 import { CustomHttpException } from 'src/exception/custom-http.exception';
 import { AuthService } from 'src/auth/auth.service';
@@ -20,22 +19,28 @@ import { PaginationInfoInterface } from 'src/paginate/pagination-info.interface'
 import { RefreshTokenSerializer } from 'src/refresh-token/serializer/refresh-token.serializer';
 import { Pagination } from 'src/paginate';
 
-const appConfig = config.get('app');
-const tokenConfig = config.get('jwt');
-const BASE_OPTIONS: SignOptions = {
-  issuer: appConfig.appUrl,
-  audience: appConfig.frontendUrl
-};
+import config from 'config';
 
 @Injectable()
 export class RefreshTokenService {
+  private readonly appConfig: any;
+  private readonly tokenConfig: any;
+  private readonly BASE_OPTIONS: SignOptions;
+
   constructor(
     @InjectRepository(RefreshTokenRepository)
     private readonly repository: RefreshTokenRepository,
     @Inject(forwardRef(() => AuthService))
     private readonly authService: AuthService,
     private readonly jwt: JwtService
-  ) {}
+  ) {
+    this.appConfig = config.get('app');
+    this.tokenConfig = config.get('jwt');
+    this.BASE_OPTIONS = {
+      issuer: this.appConfig.appUrl,
+      audience: this.appConfig.frontendUrl
+    };
+  }
 
   /**
    * Generate refresh token
@@ -48,7 +53,7 @@ export class RefreshTokenService {
   ): Promise<string> {
     const token = await this.repository.createRefreshToken(user, refreshToken);
     const opts: SignOptions = {
-      ...BASE_OPTIONS,
+      ...this.BASE_OPTIONS,
       subject: String(user.id),
       jwtid: String(token.id)
     };
@@ -56,7 +61,7 @@ export class RefreshTokenService {
     return this.jwt.signAsync(
       { ...opts },
       {
-        expiresIn: tokenConfig.refreshExpiresIn
+        expiresIn: this.tokenConfig.refreshExpiresIn
       }
     );
   }

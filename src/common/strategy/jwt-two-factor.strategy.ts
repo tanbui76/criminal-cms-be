@@ -1,7 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { InjectRepository } from '@nestjs/typeorm';
-import * as config from 'config';
 import { Request } from 'express';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
@@ -10,6 +9,8 @@ import { CustomHttpException } from 'src/exception/custom-http.exception';
 import { JwtPayloadDto } from 'src/auth/dto/jwt-payload.dto';
 import { UserEntity } from 'src/auth/entity/user.entity';
 import { UserRepository } from 'src/auth/user.repository';
+
+import config from 'config';
 
 @Injectable()
 export class JwtTwoFactorStrategy extends PassportStrategy(
@@ -20,13 +21,14 @@ export class JwtTwoFactorStrategy extends PassportStrategy(
     @InjectRepository(UserRepository)
     private userRepository: UserRepository
   ) {
+    const jwtConfig = config.get('jwt');
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
         (request: Request) => {
           return request?.cookies?.Authentication;
         }
       ]),
-      secretOrKey: process.env.JWT_SECRET || config.get('jwt.secret')
+      secretOrKey: process.env.JWT_SECRET || jwtConfig.secret
     });
   }
 

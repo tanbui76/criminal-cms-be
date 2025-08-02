@@ -48,7 +48,7 @@ export class CriminalsService
   ): Promise<Pagination<CriminalSerializer>> {
     return this.repository.paginate(
       criminalFilterDto,
-      [],
+      ['profileTypes'],
       ['name', 'description', 'birthplace'],
       {
         groups: [basicFieldGroupsForSerializing]
@@ -61,7 +61,7 @@ export class CriminalsService
    * @param id
    */
   async findOne(id: number): Promise<CriminalSerializer> {
-    return this.repository.get(id, [], {
+    return this.repository.get(id, ['profileTypes'], {
       groups: [basicFieldGroupsForSerializing]
     });
   }

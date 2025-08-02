@@ -7,6 +7,7 @@ import { DashboardService } from 'src/dashboard/dashboard.service';
 import { OsStatsInterface } from 'src/dashboard/interface/os-stats.interface';
 import { UsersStatsInterface } from 'src/dashboard/interface/user-stats.interface';
 import { BrowserStatsInterface } from 'src/dashboard/interface/browser-stats.interface';
+import { CriminalStatsInterface } from 'src/dashboard/interface/criminal-stats.interface';
 
 @ApiTags('dashboard')
 @UseGuards(JwtTwoFactorGuard, PermissionGuard)
@@ -27,5 +28,10 @@ export class DashboardController {
   @Get('/browser')
   browserStat(): Promise<Array<BrowserStatsInterface>> {
     return this.dashboardService.getBrowserData();
+  }
+
+  @Get('/criminals')
+  criminalStats(): Promise<CriminalStatsInterface> {
+    return this.dashboardService.getCriminalStats();
   }
 }

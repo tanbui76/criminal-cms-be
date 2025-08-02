@@ -3,6 +3,8 @@ import {
   Entity,
   Index,
   JoinColumn,
+  JoinTable,
+  ManyToMany,
   ManyToOne,
   OneToOne,
   Unique
@@ -35,8 +37,19 @@ export class CriminalEntity extends CustomBaseEntity {
   @Column('varchar')
   address: string; // hộ khẩu thường trú
 
-  @ManyToOne(() => ProfileTypeEntity, (profileType) => profileType.criminals)
-  profileType: ProfileTypeEntity;
+  @ManyToMany(() => ProfileTypeEntity, (profileType) => profileType.criminals)
+  @JoinTable({
+    name: 'criminal_profile_types',
+    joinColumn: {
+      name: 'criminalId',
+      referencedColumnName: 'id'
+    },
+    inverseJoinColumn: {
+      name: 'profileTypeId',
+      referencedColumnName: 'id'
+    }
+  })
+  profileTypes: ProfileTypeEntity[];
 
   @OneToOne(() => JudgmentExecutionEntity)
   @JoinColumn()

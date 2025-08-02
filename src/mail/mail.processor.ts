@@ -1,5 +1,4 @@
 import { Logger } from '@nestjs/common';
-import * as config from 'config';
 import { MailerService } from '@nestjs-modules/mailer';
 import {
   OnQueueActive,
@@ -12,7 +11,9 @@ import { Job } from 'bull';
 
 import { MailJobInterface } from 'src/mail/interface/mail-job.interface';
 
-@Processor(config.get('mail.queueName'))
+import config from 'config';
+
+@Processor('truthy-mail')
 export class MailProcessor {
   private readonly logger = new Logger(this.constructor.name);
 
