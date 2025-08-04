@@ -6,7 +6,6 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
-import * as config from 'config';
 import { existsSync, unlinkSync } from 'fs';
 import { SignOptions } from 'jsonwebtoken';
 import { DeepPartial, Not, ObjectLiteral } from 'typeorm';
@@ -44,22 +43,16 @@ import { ValidationPayloadInterface } from 'src/common/interfaces/validation-err
 import { RefreshPaginateFilterDto } from 'src/refresh-token/dto/refresh-paginate-filter.dto';
 import { RefreshTokenSerializer } from 'src/refresh-token/serializer/refresh-token.serializer';
 
-const throttleConfig = config.get('throttle.login');
-const jwtConfig = config.get('jwt');
-const appConfig = config.get('app');
-// const isSameSite = process.env.IS_SAME_SITE || appConfig.sameSite;
-// for heroku
-const isSameSite =
-  appConfig.sameSite !== null
-    ? appConfig.sameSite
-    : process.env.IS_SAME_SITE === 'true';
-const BASE_OPTIONS: SignOptions = {
-  issuer: appConfig.appUrl,
-  audience: appConfig.frontendUrl
-};
+import config from 'config';
 
 @Injectable()
 export class AuthService {
+  private readonly throttleConfig: any;
+  private readonly jwtConfig: any;
+  private readonly appConfig: any;
+  private readonly isSameSite: boolean;
+  private readonly BASE_OPTIONS: SignOptions;
+
   constructor(
     @InjectRepository(UserRepository)
     private readonly userRepository: UserRepository,
@@ -68,7 +61,19 @@ export class AuthService {
     private readonly refreshTokenService: RefreshTokenService,
     @Inject('LOGIN_THROTTLE')
     private readonly rateLimiter: RateLimiterStoreAbstract
-  ) {}
+  ) {
+    this.throttleConfig = config.get('throttle.login');
+    this.jwtConfig = config.get('jwt');
+    this.appConfig = config.get('app');
+    this.isSameSite =
+      this.appConfig.sameSite !== null
+        ? this.appConfig.sameSite
+        : process.env.IS_SAME_SITE === 'true';
+    this.BASE_OPTIONS = {
+      issuer: this.appConfig.appUrl,
+      audience: this.appConfig.frontendUrl
+    };
+  }
 
   /**
    * send mail
@@ -148,7 +153,7 @@ export class AuthService {
     // Check if user is already blocked
     if (
       resUsernameAndIP !== null &&
-      resUsernameAndIP.consumedPoints > throttleConfig.limit
+      resUsernameAndIP.consumedPoints > this.throttleConfig.limit
     ) {
       retrySecs = Math.round(resUsernameAndIP.msBeforeNext / 1000) || 1;
     }
@@ -198,7 +203,7 @@ export class AuthService {
     isTwoFAAuthenticated = false
   ): Promise<string> {
     const opts: SignOptions = {
-      ...BASE_OPTIONS,
+      ...this.BASE_OPTIONS,
       subject: String(user.id)
     };
     return this.jwt.signAsync({
@@ -461,13 +466,13 @@ export class AuthService {
   getCookieForLogOut(): string[] {
     return [
       `Authentication=; HttpOnly; Path=/; Max-Age=0; ${
-        !isSameSite ? 'SameSite=None; Secure;' : ''
+        !this.isSameSite ? 'SameSite=None; Secure;' : ''
       }`,
       `Refresh=; HttpOnly; Path=/; Max-Age=0; ${
-        !isSameSite ? 'SameSite=None; Secure;' : ''
+        !this.isSameSite ? 'SameSite=None; Secure;' : ''
       }`,
       `ExpiresIn=; Path=/; Max-Age=0; ${
-        !isSameSite ? 'SameSite=None; Secure;' : ''
+        !this.isSameSite ? 'SameSite=None; Secure;' : ''
       }`
     ];
   }
@@ -480,19 +485,19 @@ export class AuthService {
   buildResponsePayload(accessToken: string, refreshToken?: string): string[] {
     let tokenCookies = [
       `Authentication=${accessToken}; HttpOnly; Path=/; ${
-        !isSameSite ? 'SameSite=None; Secure;' : ''
-      } Max-Age=${jwtConfig.cookieExpiresIn}`
+        !this.isSameSite ? 'SameSite=None; Secure;' : ''
+      } Max-Age=${this.jwtConfig.cookieExpiresIn}`
     ];
     if (refreshToken) {
       const expiration = new Date();
-      expiration.setSeconds(expiration.getSeconds() + jwtConfig.expiresIn);
+      expiration.setSeconds(expiration.getSeconds() + this.jwtConfig.expiresIn);
       tokenCookies = tokenCookies.concat([
         `Refresh=${refreshToken}; HttpOnly; Path=/; ${
-          !isSameSite ? 'SameSite=None; Secure;' : ''
-        } Max-Age=${jwtConfig.cookieExpiresIn}`,
+          !this.isSameSite ? 'SameSite=None; Secure;' : ''
+        } Max-Age=${this.jwtConfig.cookieExpiresIn}`,
         `ExpiresIn=${expiration}; Path=/; ${
-          !isSameSite ? 'SameSite=None; Secure;' : ''
-        } Max-Age=${jwtConfig.cookieExpiresIn}`
+          !this.isSameSite ? 'SameSite=None; Secure;' : ''
+        } Max-Age=${this.jwtConfig.cookieExpiresIn}`
       ]);
     }
     return tokenCookies;

@@ -1,6 +1,6 @@
 import { ConnectionOptions } from 'typeorm';
-import * as config from 'config';
 
+import config from 'config';
 const dbConfig = config.get('db');
 const ormConfig: ConnectionOptions = {
   type: process.env.DB_TYPE || dbConfig.type,
@@ -22,4 +22,4 @@ const ormConfig: ConnectionOptions = {
   }
 };
 
-export = ormConfig;
+export { ormConfig };

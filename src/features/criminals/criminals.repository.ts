@@ -1,4 +1,4 @@
-import { EntityRepository } from 'typeorm';
+import { EntityRepository, In, ILike } from 'typeorm';
 import { classToPlain, plainToClass } from 'class-transformer';
 
 import { BaseRepository } from 'src/common/repository/base.repository';
@@ -8,6 +8,7 @@ import { CreateCriminalDto } from './dto/create-criminal.dto';
 import { UpdateCriminalDto } from './dto/update-criminal.dto';
 import { ProfileTypeEntity } from '../profileTypes/entities/profile-type.entity';
 import { JudgmentExecutionEntity } from '../judgementExecution/entities/judgement-execution.entity';
+import { Pagination } from 'src/paginate';
 
 @EntityRepository(CriminalEntity)
 export class CriminalsRepository extends BaseRepository<
@@ -25,7 +26,7 @@ export class CriminalsRepository extends BaseRepository<
       startExecuteDate,
       endExecuteDate,
       doneExecuteDate,
-      profileTypeId,
+      profileTypeIds,
       judgmentExecutionId,
       birthdate
     } = createCriminalDto;
@@ -38,10 +39,13 @@ export class CriminalsRepository extends BaseRepository<
     criminal.startExecuteDate = startExecuteDate;
     criminal.endExecuteDate = endExecuteDate;
     criminal.doneExecuteDate = doneExecuteDate;
-    if (profileTypeId) {
-      criminal.profileType = await this.manager.findOne(ProfileTypeEntity, {
-        where: { id: profileTypeId }
+    if (profileTypeIds && profileTypeIds.length > 0) {
+      const profileTypes = await this.manager.find(ProfileTypeEntity, {
+        where: { id: In(profileTypeIds) }
       });
+      if (profileTypes.length > 0) {
+        criminal.profileTypes = profileTypes;
+      }
     }
 
     if (judgmentExecutionId) {
@@ -53,7 +57,13 @@ export class CriminalsRepository extends BaseRepository<
       );
     }
     await criminal.save();
-    return this.transform(criminal);
+
+    const savedCriminal = await this.findOne({
+      where: { id: criminal.id },
+      relations: ['profileTypes']
+    });
+
+    return this.transform(savedCriminal);
   }
 
   async updateItem(
@@ -75,10 +85,16 @@ export class CriminalsRepository extends BaseRepository<
         criminal[field] = updateCriminalDto[field];
       }
     }
-    if (updateCriminalDto.profileTypeId) {
-      criminal.profileType = await this.manager.findOne(ProfileTypeEntity, {
-        where: { id: updateCriminalDto.profileTypeId }
+    if (
+      updateCriminalDto.profileTypeIds &&
+      updateCriminalDto.profileTypeIds.length > 0
+    ) {
+      const profileTypes = await this.manager.find(ProfileTypeEntity, {
+        where: { id: In(updateCriminalDto.profileTypeIds) }
       });
+      if (profileTypes.length > 0) {
+        criminal.profileTypes = profileTypes;
+      }
     }
 
     if (updateCriminalDto.judgmentExecutionId) {
@@ -92,7 +108,14 @@ export class CriminalsRepository extends BaseRepository<
       );
     }
     await criminal.save();
-    return this.transform(criminal);
+
+    // Load lại với relations để đảm bảo có đầy đủ data
+    const savedCriminal = await this.findOne({
+      where: { id: criminal.id },
+      relations: ['profileTypes']
+    });
+
+    return this.transform(savedCriminal);
   }
 
   /**
@@ -106,6 +129,66 @@ export class CriminalsRepository extends BaseRepository<
       classToPlain(model, transformOption),
       transformOption
     );
+  }
+
+  /**
+   * Override paginate method to support profileTypeIds filter
+   * @param searchFilter
+   * @param relations
+   * @param searchCriteria
+   * @param transformOptions
+   */
+  async paginate(
+    searchFilter: any,
+    relations: string[] = [],
+    searchCriteria: string[] = [],
+    transformOptions = {}
+  ): Promise<any> {
+    const paginationInfo = this.getPaginationInfo(searchFilter);
+    const { page, skip, limit } = paginationInfo;
+
+    // Build query builder
+    const queryBuilder = this.createQueryBuilder('criminal');
+
+    // Add relations
+    if (relations.includes('profileTypes')) {
+      queryBuilder.leftJoinAndSelect('criminal.profileTypes', 'profileTypes');
+    }
+
+    // Handle keywords search
+    if (searchFilter.hasOwnProperty('keywords') && searchFilter.keywords) {
+      for (const key of searchCriteria) {
+        queryBuilder.andWhere(`criminal.${key} ILIKE :keyword`, {
+          keyword: `%${searchFilter.keywords}%`
+        });
+      }
+    }
+
+    // Handle profileTypeIds filter
+    if (
+      searchFilter.hasOwnProperty('profileTypeIds') &&
+      searchFilter.profileTypeIds &&
+      searchFilter.profileTypeIds.length > 0
+    ) {
+      queryBuilder.andWhere('profileTypes.id IN (:...profileTypeIds)', {
+        profileTypeIds: searchFilter.profileTypeIds
+      });
+    }
+
+    // Add pagination
+    queryBuilder.skip(skip).take(limit).orderBy('criminal.createdAt', 'DESC');
+
+    const [results, total] = await queryBuilder.getManyAndCount();
+    const serializedResult = this.transformMany(results, transformOptions);
+
+    return new Pagination({
+      results: serializedResult,
+      totalItems: total,
+      pageSize: limit,
+      currentPage: page,
+      previous: page > 1 ? page - 1 : 0,
+      next: total > skip + limit ? page + 1 : 0
+    });
   }
 
   /**

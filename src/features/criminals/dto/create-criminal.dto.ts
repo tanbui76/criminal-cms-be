@@ -31,8 +31,8 @@ export class CreateCriminalDto {
   address: string; // hộ khẩu thường trú
 
   @ValidateIf((object, value) => value)
-  @IsNumber()
-  profileTypeId: number;
+  @IsNumber({}, { each: true })
+  profileTypeIds: number[];
 
   @ValidateIf((object, value) => value)
   @IsNumber()

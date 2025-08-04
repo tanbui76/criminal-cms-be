@@ -1,5 +1,4 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import * as config from 'config';
 import { Response } from 'express';
 import { authenticator } from 'otplib';
 import { toFileStream, toDataURL } from 'qrcode';
@@ -9,11 +8,15 @@ import { AuthService } from 'src/auth/auth.service';
 import { UserEntity } from 'src/auth/entity/user.entity';
 import { CustomHttpException } from 'src/exception/custom-http.exception';
 
-const TwofaConfig = config.get('twofa');
+import config from 'config';
 
 @Injectable()
 export class TwofaService {
-  constructor(private readonly usersService: AuthService) {}
+  private readonly TwofaConfig: any;
+
+  constructor(private readonly usersService: AuthService) {
+    this.TwofaConfig = config.get('twofa');
+  }
 
   async generateTwoFASecret(user: UserEntity) {
     if (user.twoFAThrottleTime > new Date()) {
@@ -29,7 +32,7 @@ export class TwofaService {
     const secret = authenticator.generateSecret();
     const otpauthUrl = authenticator.keyuri(
       user.email,
-      TwofaConfig.authenticationAppNAme,
+      this.TwofaConfig.authenticationAppNAme,
       secret
     );
     await this.usersService.setTwoFactorAuthenticationSecret(secret, user.id);

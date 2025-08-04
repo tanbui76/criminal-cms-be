@@ -120,6 +120,10 @@ export const PermissionConfiguration: PermissionConfigInterface = {
       method: MethodList.GET
     },
     {
+      path: '/dashboard/criminals',
+      method: MethodList.GET
+    },
+    {
       path: '/logout',
       method: MethodList.POST
     }
@@ -328,6 +332,67 @@ export const PermissionConfiguration: PermissionConfigInterface = {
             {
               path: '/email-templates/:id',
               method: MethodList.DELETE
+            }
+          ]
+        }
+      ]
+    },
+    {
+      name: 'Criminal Management',
+      resource: 'criminal',
+      hasSubmodules: false,
+      permissions: [
+        {
+          name: 'View all criminals',
+          route: [
+            {
+              path: '/criminals',
+              method: MethodList.GET
+            }
+          ]
+        },
+        {
+          name: 'View criminal by id',
+          route: [
+            {
+              path: '/criminals/:id',
+              method: MethodList.GET
+            }
+          ]
+        },
+        {
+          name: 'Store new criminal',
+          route: [
+            {
+              path: '/criminals',
+              method: MethodList.POST
+            }
+          ]
+        },
+        {
+          name: 'Update criminal by id',
+          route: [
+            {
+              path: '/criminals/:id',
+              method: MethodList.PUT
+            }
+          ]
+        },
+        {
+          name: 'Delete criminal by id',
+          route: [
+            {
+              path: '/criminals/:id',
+              method: MethodList.DELETE
+            }
+          ]
+        },
+        {
+          name: 'View criminal statistics',
+          route: [
+            {
+              path: '/dashboard/criminals',
+              method: MethodList.GET
             }
           ]
         }

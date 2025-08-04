@@ -1,12 +1,12 @@
 import { EntityRepository } from 'typeorm';
-import * as config from 'config';
 
 import { RefreshToken } from 'src/refresh-token/entities/refresh-token.entity';
 import { UserSerializer } from 'src/auth/serializer/user.serializer';
 import { BaseRepository } from 'src/common/repository/base.repository';
 import { RefreshTokenSerializer } from 'src/refresh-token/serializer/refresh-token.serializer';
 
-const tokenConfig = config.get('jwt');
+import config from 'config';
+
 @EntityRepository(RefreshToken)
 export class RefreshTokenRepository extends BaseRepository<
   RefreshToken,
@@ -21,6 +21,7 @@ export class RefreshTokenRepository extends BaseRepository<
     user: UserSerializer,
     tokenPayload: Partial<RefreshToken>
   ): Promise<RefreshToken> {
+    const tokenConfig = config.get('jwt');
     const token = this.create();
     token.userId = user.id;
     token.isRevoked = false;

@@ -1,4 +1,4 @@
-import { Column, Entity, Index, OneToMany, Unique } from 'typeorm';
+import { Column, Entity, Index, ManyToMany, Unique } from 'typeorm';
 
 import { CustomBaseEntity } from 'src/common/entity/custom-base.entity';
 import { CriminalEntity } from 'src/features/criminals/entities/criminal.entity';
@@ -17,7 +17,7 @@ export class ProfileTypeEntity extends CustomBaseEntity {
   @Column('text')
   description: string; //mô tả (ghi chú)
 
-  @OneToMany(() => CriminalEntity, (criminal) => criminal.profileType)
+  @ManyToMany(() => CriminalEntity, (criminal) => criminal.profileTypes)
   criminals: CriminalEntity[];
 
   constructor(data?: Partial<ProfileTypeEntity>) {
