@@ -49,7 +49,7 @@ export class CriminalsService
     return this.repository.paginate(
       criminalFilterDto,
       ['profileTypes'],
-      ['name', 'description', 'birthplace'],
+      ['name'],
       {
         groups: [basicFieldGroupsForSerializing]
       }

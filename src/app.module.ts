@@ -19,7 +19,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { MailModule } from 'src/mail/mail.module';
 import { BullModule } from '@nestjs/bull';
-import { ormConfig } from 'src/config/ormconfig';
+import ormConfig from 'src/config/ormconfig';
 import { throttleConfig } from 'src/config/throttle-config';
 import { winstonConfig } from 'src/config/winston';
 

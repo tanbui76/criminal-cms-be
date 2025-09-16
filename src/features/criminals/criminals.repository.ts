@@ -157,6 +157,7 @@ export class CriminalsRepository extends BaseRepository<
 
     // Handle keywords search
     if (searchFilter.hasOwnProperty('keywords') && searchFilter.keywords) {
+      console.log('searchCriteria: ', searchCriteria);
       for (const key of searchCriteria) {
         queryBuilder.andWhere(`criminal.${key} ILIKE :keyword`, {
           keyword: `%${searchFilter.keywords}%`
