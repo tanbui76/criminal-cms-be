@@ -8,4 +8,4 @@ export enum ProfileTypeEnum {
   PROFESSIONAL_BAN = 'Hồ sơ thi hành án phạt cấm đảm nhiệm chức vụ, cấm hành nghề hoặc làm công việc nhất định',
   CONDITIONAL_EARLY_RELEASE = 'Hồ sơ thi hành quyết định tạm đình chỉ chấp hành án phạt tù',
   EARLY_RELEASE = 'Hồ sơ phạm nhân của người được tha tù trước thời hạn có điều kiện'
-} 
+}

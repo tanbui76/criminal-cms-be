@@ -14,4 +14,3 @@ export const throttleConfig: ThrottlerModuleOptions = {
     password: process.env.REDIS_PASSWORD || redisConfig.password
   })
 };
-

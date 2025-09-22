@@ -25,7 +25,8 @@ export class CriminalsRepository extends BaseRepository<
       birthplace,
       startExecuteDate,
       endExecuteDate,
-      doneExecuteDate,
+      // doneExecuteDate,
+      refNo,
       profileTypeIds,
       judgmentExecutionId,
       birthdate
@@ -38,7 +39,8 @@ export class CriminalsRepository extends BaseRepository<
     criminal.birthplace = birthplace;
     criminal.startExecuteDate = startExecuteDate;
     criminal.endExecuteDate = endExecuteDate;
-    criminal.doneExecuteDate = doneExecuteDate;
+    // criminal.doneExecuteDate = doneExecuteDate;
+    criminal.refNo = refNo;
     if (profileTypeIds && profileTypeIds.length > 0) {
       const profileTypes = await this.manager.find(ProfileTypeEntity, {
         where: { id: In(profileTypeIds) }
@@ -78,7 +80,8 @@ export class CriminalsRepository extends BaseRepository<
       'address',
       'startExecuteDate',
       'endExecuteDate',
-      'doneExecuteDate'
+      'refNo'
+      // 'doneExecuteDate'
     ];
     for (const field of fields) {
       if (updateCriminalDto[field]) {

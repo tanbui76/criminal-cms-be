@@ -26,7 +26,8 @@ export const winstonConfig: WinstonModuleOptions = {
           process.env.CLOUDWATCH_GROUP_NAME || winstonConfigData.groupName,
         logStreamName:
           process.env.CLOUDWATCH_STREAM_NAME || winstonConfigData.streamName,
-        awsRegion: process.env.CLOUDWATCH_AWS_REGION || winstonConfigData.awsRegion,
+        awsRegion:
+          process.env.CLOUDWATCH_AWS_REGION || winstonConfigData.awsRegion,
         messageFormatter: function (item) {
           return (
             item.level + ': ' + item.message + ' ' + JSON.stringify(item.meta)

@@ -61,8 +61,11 @@ export class CriminalEntity extends CustomBaseEntity {
   @Column('date')
   endExecuteDate: Date; //Ngày kết thúc thi hành án
 
-  @Column('date')
-  doneExecuteDate: Date; //Ngày chấp hành án xong
+  // @Column('date')
+  // doneExecuteDate: Date; //Ngày chấp hành án xong
+
+  @Column('varchar')
+  refNo: string;
 
   constructor(data?: Partial<CriminalEntity>) {
     super();
