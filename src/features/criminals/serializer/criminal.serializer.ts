@@ -2,6 +2,9 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Expose, Transform } from 'class-transformer';
 
 import { ModelSerializer } from 'src/common/serializer/model.serializer';
+import { ExecutionStatus } from '../enums/execution-status.enum';
+import { getExecutionStatus } from 'src/common/helper/time.helper';
+import moment from 'moment';
 
 export const basicFieldGroupsForSerializing: string[] = ['basic'];
 
@@ -40,6 +43,32 @@ export class CriminalSerializer extends ModelSerializer {
   @ApiPropertyOptional()
   @Expose()
   doneExecuteDate: Date;
+
+  @ApiProperty({
+    description: 'Trạng thái thi hành án',
+    enum: ExecutionStatus,
+    example: ExecutionStatus.ACTIVE
+  })
+  @Expose()
+  @Transform(({ obj }) => {
+    return getExecutionStatus(obj.endExecuteDate, obj.doneExecuteDate);
+  })
+  executionStatus: ExecutionStatus;
+
+  @ApiProperty({
+    description: 'Số ngày còn lại để thi hành án (âm nếu đã hết hạn)',
+    example: 120
+  })
+  @Expose()
+  @Transform(({ obj }) => {
+    if (obj.doneExecuteDate) {
+      return 0; // Đã hoàn thành
+    }
+    const today = moment();
+    const endDate = moment(obj.endExecuteDate);
+    return endDate.diff(today, 'days');
+  })
+  daysRemaining: number;
 
   @ApiPropertyOptional({
     description: 'Array of profile types with id and name',

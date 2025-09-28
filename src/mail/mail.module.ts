@@ -8,6 +8,9 @@ import { MailProcessor } from 'src/mail/mail.processor';
 import { EmailTemplateModule } from 'src/email-template/email-template.module';
 
 import config from 'config';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 @Module({
   imports: [

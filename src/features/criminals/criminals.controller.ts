@@ -21,9 +21,10 @@ import { CriminalsService } from './criminals.service';
 import { CriminalSerializer } from './serializer/criminal.serializer';
 import { CriminalFilterDto } from './dto/criminal-filter.dto';
 import { UpdateCriminalDto } from './dto/update-criminal.dto';
+import { CreateExecutiveClemencyDto } from './dto/create-executive-clemency.dto';
 
 @ApiTags('criminals')
-@UseGuards(JwtTwoFactorGuard, PermissionGuard)
+@UseGuards(JwtTwoFactorGuard)
 @Controller('criminals')
 @ApiBearerAuth()
 export class CriminalsController {
@@ -73,5 +74,15 @@ export class CriminalsController {
     id: string
   ): Promise<void> {
     return this.criminalsService.remove(+id);
+  }
+
+  @Post(':id/executive-clemencies')
+  addExecutiveClemencies(
+    @Param('id')
+    id: string,
+    @Body()
+    dto: CreateExecutiveClemencyDto
+  ): Promise<CriminalSerializer> {
+    return this.criminalsService.addExecutiveClemencies(+id, dto);
   }
 }

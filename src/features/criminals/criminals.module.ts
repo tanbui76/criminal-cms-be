@@ -7,12 +7,14 @@ import { PermissionsModule } from 'src/permission/permissions.module';
 import { CriminalsRepository } from './criminals.repository';
 import { CriminalsController } from './criminals.controller';
 import { CriminalsService } from './criminals.service';
+import { ExecutiveClemencyModule } from '../executive-clemencies/executive-clemency.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([CriminalsRepository]),
     AuthModule,
-    PermissionsModule
+    PermissionsModule,
+    ExecutiveClemencyModule
   ],
   exports: [],
   controllers: [CriminalsController],

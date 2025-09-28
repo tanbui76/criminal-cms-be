@@ -4,8 +4,11 @@ import { Test } from '@nestjs/testing';
 import { createConnection, getConnection } from 'typeorm';
 import { ThrottlerStorageRedisService } from 'nestjs-throttler-storage-redis';
 import { RateLimiterRedis } from 'rate-limiter-flexible';
-import * as Redis from 'ioredis';
+import { Redis } from 'ioredis';
 import * as config from 'config';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 import { AppModule } from 'src/app.module';
 
@@ -14,7 +17,7 @@ const dbConfig = config.get('db');
 export class AppFactory {
   private constructor(
     private readonly appInstance: INestApplication,
-    private readonly redis: Redis.Redis
+    private readonly redis: Redis
   ) {}
 
   get instance() {
@@ -99,7 +102,7 @@ export class AppFactory {
     await connection.close();
   }
 
-  async teardown(redis: Redis.Redis) {
+  async teardown(redis: Redis) {
     return new Promise<void>((resolve) => {
       redis.quit();
       redis.on('end', () => {

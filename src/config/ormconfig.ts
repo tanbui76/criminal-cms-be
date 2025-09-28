@@ -1,6 +1,9 @@
 import { ConnectionOptions } from 'typeorm';
-
 import config from 'config';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
+
 const dbConfig = config.get('db');
 const ormConfig: ConnectionOptions = {
   type: process.env.DB_TYPE || dbConfig.type,
