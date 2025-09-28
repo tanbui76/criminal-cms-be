@@ -395,6 +395,15 @@ export const PermissionConfiguration: PermissionConfigInterface = {
               method: MethodList.GET
             }
           ]
+        },
+        {
+          name: 'Add executive clemency to criminal',
+          route: [
+            {
+              path: '/criminals/:id/executive-clemencies',
+              method: MethodList.POST
+            }
+          ]
         }
       ]
     }

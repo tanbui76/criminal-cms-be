@@ -48,12 +48,12 @@ export class CreateCriminalDto {
   @Type(() => Date)
   endExecuteDate: Date; //Ngày kết thúc thi hành án
 
-  // @ValidateIf((object, value) => value)
-  // @IsDate()
-  // @Type(() => Date)
-  // doneExecuteDate: Date; //Ngày chấp hành án xong
-
   @ValidateIf((object, value) => value)
-  @IsString()
-  refNo: string;
+  @IsDate()
+  @Type(() => Date)
+  doneExecuteDate: Date; //Ngày chấp hành án xong
+
+  // @ValidateIf((object, value) => value)
+  // @IsString()
+  // refNo: string;
 }

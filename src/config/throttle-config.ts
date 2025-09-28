@@ -1,7 +1,10 @@
 import { ThrottlerModuleOptions } from '@nestjs/throttler';
 import { ThrottlerStorageRedisService } from 'nestjs-throttler-storage-redis';
+import config from 'config';
+import * as dotenv from 'dotenv';
 
-const config = require('config');
+dotenv.config();
+
 const throttleConfigVariables = config.get('throttle.global');
 const redisConfig = config.get('queue');
 

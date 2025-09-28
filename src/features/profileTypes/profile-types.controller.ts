@@ -23,7 +23,7 @@ import { ProfileTypeFilterDto } from './dto/profile-type-filter.dto';
 import { UpdateProfileTypeDto } from './dto/update-profile-type.dto';
 
 @ApiTags('profileTypes')
-@UseGuards(JwtTwoFactorGuard, PermissionGuard)
+@UseGuards(JwtTwoFactorGuard)
 @Controller('profile-types')
 @ApiBearerAuth()
 export class ProfileTypesController {

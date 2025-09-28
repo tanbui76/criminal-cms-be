@@ -6,6 +6,7 @@ import {
   JoinTable,
   ManyToMany,
   ManyToOne,
+  OneToMany,
   OneToOne,
   Unique
 } from 'typeorm';
@@ -13,12 +14,20 @@ import {
 import { CustomBaseEntity } from 'src/common/entity/custom-base.entity';
 import { ProfileTypeEntity } from 'src/features/profileTypes/entities/profile-type.entity';
 import { JudgmentExecutionEntity } from 'src/features/judgementExecution/entities/judgement-execution.entity';
+import { ExecutiveClemencyEntity } from 'src/features/executive-clemencies/entities/executive-clemency.entity';
 
 @Entity({
   name: 'criminals'
 })
 @Unique(['name'])
 export class CriminalEntity extends CustomBaseEntity {
+  constructor(data?: Partial<CriminalEntity>) {
+    super();
+    if (data) {
+      Object.assign(this, data);
+    }
+  }
+
   @Column('varchar', { length: 100 })
   @Index({
     unique: true
@@ -61,16 +70,15 @@ export class CriminalEntity extends CustomBaseEntity {
   @Column('date')
   endExecuteDate: Date; //Ngày kết thúc thi hành án
 
-  // @Column('date')
-  // doneExecuteDate: Date; //Ngày chấp hành án xong
+  @Column('date')
+  doneExecuteDate: Date; //Ngày chấp hành án xong
 
-  @Column('varchar')
-  refNo: string;
+  // @Column('varchar')
+  // refNo: string;
 
-  constructor(data?: Partial<CriminalEntity>) {
-    super();
-    if (data) {
-      Object.assign(this, data);
-    }
-  }
+  @OneToMany(
+    () => ExecutiveClemencyEntity,
+    (executiveClemency) => executiveClemency.criminal
+  )
+  executiveClemencies: ExecutiveClemencyEntity[];
 }
